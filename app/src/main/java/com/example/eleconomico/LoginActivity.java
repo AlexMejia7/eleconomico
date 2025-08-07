@@ -8,17 +8,26 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.eleconomico.R;  // aquí corregido
+import com.google.gson.JsonObject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
     private EditText etEmail, etPassword;
     private Button btnLogin, btnRegister;
+    private SessionManager sessionManager;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        sessionManager = new SessionManager(this);
+        apiService = ApiClient.getClient().create(ApiService.class);
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
@@ -26,24 +35,63 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.btnRegister);
 
         btnLogin.setOnClickListener(v -> {
-            String email = etEmail.getText().toString().trim();
-            String password = etPassword.getText().toString();
+            String correo = etEmail.getText().toString().trim();
+            String contrasena = etPassword.getText().toString();
 
-            if(email.isEmpty() || password.isEmpty()){
-                Toast.makeText(this, "Por favor ingresa email y contraseña", Toast.LENGTH_SHORT).show();
+            if (correo.isEmpty() || contrasena.isEmpty()) {
+                Toast.makeText(this, "Por favor ingresa correo y contraseña", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // TODO: Validar login vía API o base local
-            // Por ahora simulamos login exitoso
-            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-            startActivity(intent);
-            finish();
+            JsonObject json = new JsonObject();
+            json.addProperty("correo", correo);
+            json.addProperty("contrasena", contrasena);
+
+            Call<JsonObject> call = apiService.loginRaw(json);
+            call.enqueue(new Callback<JsonObject>() {
+                @Override
+                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        JsonObject body = response.body();
+
+                        if (body.has("usuario")) {
+                            JsonObject usuarioJson = body.getAsJsonObject("usuario");
+                            String nombre = usuarioJson.get("nombre").getAsString();
+
+                            sessionManager.saveUserEmail(correo);
+                            Toast.makeText(LoginActivity.this, "Bienvenido " + nombre, Toast.LENGTH_SHORT).show();
+
+                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                            finish();
+
+                        } else if (body.has("repartidor")) {
+                            JsonObject repartidorJson = body.getAsJsonObject("repartidor");
+                            String nombre = repartidorJson.get("nombre").getAsString();
+
+                            sessionManager.saveUserEmail(correo);
+                            Toast.makeText(LoginActivity.this, "Bienvenido repartidor " + nombre, Toast.LENGTH_SHORT).show();
+
+                            startActivity(new Intent(LoginActivity.this, RepartidorActivity.class));
+                            finish();
+
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Credenciales inválidas", Toast.LENGTH_SHORT).show();
+                        }
+
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<JsonObject> call, Throwable t) {
+                    Toast.makeText(LoginActivity.this, "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
         });
 
         btnRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
     }
 }

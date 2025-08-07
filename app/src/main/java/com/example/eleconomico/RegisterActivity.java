@@ -1,6 +1,5 @@
 package com.example.eleconomico;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -8,12 +7,15 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.eleconomico.R;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText etEmail, etPassword, etConfirmPassword;
+    private EditText etEmail, etPassword;
     private Button btnRegister;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,31 +24,40 @@ public class RegisterActivity extends AppCompatActivity {
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
-        etConfirmPassword = findViewById(R.id.etConfirmPassword);
         btnRegister = findViewById(R.id.btnRegister);
+
+        apiService = ApiClient.getClient().create(ApiService.class);
 
         btnRegister.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
-            String password = etPassword.getText().toString();
-            String confirmPassword = etConfirmPassword.getText().toString();
+            String password = etPassword.getText().toString().trim();
 
-            if(email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()){
-                Toast.makeText(this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show();
+            if(email.isEmpty() || password.isEmpty()){
+                Toast.makeText(this, "Completa los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if(!password.equals(confirmPassword)){
-                Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            Usuario nuevoUsuario = new Usuario();
+            nuevoUsuario.setCorreo(email);
+            nuevoUsuario.setContrasena(password);
 
-            // TODO: Implementar registro real (API o Firebase)
-            Toast.makeText(this, "Registro exitoso (simulado)", Toast.LENGTH_SHORT).show();
+            Call<Mensaje> call = apiService.registrarUsuario(nuevoUsuario);
+            call.enqueue(new Callback<Mensaje>() {
+                @Override
+                public void onResponse(Call<Mensaje> call, Response<Mensaje> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Toast.makeText(RegisterActivity.this, response.body().getMensaje(), Toast.LENGTH_LONG).show();
+                        finish();
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "Error en la respuesta", Toast.LENGTH_LONG).show();
+                    }
+                }
 
-            // Volver a login
-            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+                @Override
+                public void onFailure(Call<Mensaje> call, Throwable t) {
+                    Toast.makeText(RegisterActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
         });
     }
 }

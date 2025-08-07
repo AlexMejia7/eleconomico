@@ -9,11 +9,14 @@ import androidx.appcompat.app.AppCompatActivity;
 public class DashboardActivity extends AppCompatActivity {
 
     private Button btnNuevoPedido, btnPerfil, btnCerrarSesion;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        sessionManager = new SessionManager(this);
 
         btnNuevoPedido = findViewById(R.id.btnNuevoPedido);
         btnPerfil = findViewById(R.id.btnPerfil);
@@ -30,7 +33,8 @@ public class DashboardActivity extends AppCompatActivity {
         });
 
         btnCerrarSesion.setOnClickListener(v -> {
-            // TODO: Limpiar sesión y volver a login
+            sessionManager.clearSession();
+
             Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -38,4 +42,3 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 }
-

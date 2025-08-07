@@ -33,10 +33,12 @@ android {
 
 dependencies {
 
-    implementation(libs.appcompat)
-    implementation(libs.material)
+    implementation(libs.appcompat)          // Asegúrate que alias funciona o reemplaza
+    implementation(libs.material)          // Igual aquí
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.recyclerview)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -48,6 +50,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("de.hdodenhof:circleimageview:3.1.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("com.github.bumptech.glide:glide:4.15.1")
+
+    // RecyclerView solo una vez, versión estable y reciente
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
 }

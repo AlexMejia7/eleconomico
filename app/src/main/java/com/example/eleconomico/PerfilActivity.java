@@ -22,7 +22,7 @@ public class PerfilActivity extends AppCompatActivity {
         btnGuardar = findViewById(R.id.btnGuardar);
 
         btnGuardar.setOnClickListener(v -> {
-            // TODO: Guardar datos perfil en base local o remota
+            // Aquí podrías guardar perfil en backend o base local
             Toast.makeText(this, "Perfil guardado (simulado)", Toast.LENGTH_SHORT).show();
             finish();
         });
