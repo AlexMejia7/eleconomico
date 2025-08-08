@@ -54,4 +54,5 @@ dependencies {
 
     // RecyclerView solo una vez, versión estable y reciente
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+    //implementation("androidx.recyclerview:recyclerview:1.3.0")
 }

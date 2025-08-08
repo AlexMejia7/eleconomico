@@ -19,8 +19,11 @@ public interface ApiService {
     Call<Usuario> login(@Body Usuario usuario);
 
     // Método raw (crudo) para login con JsonObject si prefieres manejar el JSON directamente
-    @POST("usuarios/login")
-    Call<JsonObject> loginRaw(@Body JsonObject body);
+    //@POST("usuarios/login")
+    //Call<JsonObject> loginRaw(@Body JsonObject body);
+
+    @POST("login")
+    Call<JsonObject> loginRaw(@Body JsonObject json);
 
     @POST("usuarios/register")
     Call<Mensaje> registrarUsuario(@Body Usuario usuario);

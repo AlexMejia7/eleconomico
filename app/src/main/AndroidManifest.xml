@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:usesCleartextTraffic="true"> <!-- 👈 Agregado para permitir HTTP -->
+        android:usesCleartextTraffic="true"> <!-- Para permitir HTTP -->
 
         <activity
             android:name=".RepartidorActivity"
@@ -44,6 +44,7 @@
         <activity
             android:name=".PerfilActivity"
             android:exported="false" />
+
     </application>
 
 </manifest>
