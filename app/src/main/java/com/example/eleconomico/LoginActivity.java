@@ -1,6 +1,7 @@
 package com.example.eleconomico;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +25,18 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Verificar si ya hay sesión guardada
+        SharedPreferences prefs = getSharedPreferences("EconómicoPrefs", MODE_PRIVATE);
+        String nombreGuardado = prefs.getString("nombre_usuario", null);
+
+        if (nombreGuardado != null) {
+            // Ya hay sesión activa → saltamos login
+            startActivity(new Intent(LoginActivity.this, MenuActivity.class));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_login);
 
         sessionManager = new SessionManager(this);
@@ -54,24 +67,33 @@ public class LoginActivity extends AppCompatActivity {
                     if (response.isSuccessful() && response.body() != null) {
                         JsonObject body = response.body();
 
+                        SharedPreferences prefs = getSharedPreferences("EconómicoPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+
                         if (body.has("usuario")) {
                             JsonObject usuarioJson = body.getAsJsonObject("usuario");
                             String nombre = usuarioJson.get("nombre").getAsString();
+                            String id = usuarioJson.get("id").getAsString();
 
-                            sessionManager.saveUserEmail(correo);
+                            editor.putString("nombre_usuario", nombre);
+                            editor.putString("id_usuario", id);
+                            editor.apply();
+
                             Toast.makeText(LoginActivity.this, "Bienvenido " + nombre, Toast.LENGTH_SHORT).show();
-
-                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                            startActivity(new Intent(LoginActivity.this, MenuActivity.class));
                             finish();
 
                         } else if (body.has("repartidor")) {
                             JsonObject repartidorJson = body.getAsJsonObject("repartidor");
                             String nombre = repartidorJson.get("nombre").getAsString();
+                            String id = repartidorJson.get("id").getAsString();
 
-                            sessionManager.saveUserEmail(correo);
+                            editor.putString("nombre_usuario", nombre);
+                            editor.putString("id_usuario", id);
+                            editor.apply();
+
                             Toast.makeText(LoginActivity.this, "Bienvenido repartidor " + nombre, Toast.LENGTH_SHORT).show();
-
-                            startActivity(new Intent(LoginActivity.this, RepartidorActivity.class));
+                            startActivity(new Intent(LoginActivity.this, MenuActivity.class));
                             finish();
 
                         } else {

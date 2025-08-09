@@ -40,6 +40,12 @@
             android:layout_height="wrap_content"
             android:text="Total: L 150.00" />
 
+        <Spinner
+            android:id="@+id/spinnerRepartidor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

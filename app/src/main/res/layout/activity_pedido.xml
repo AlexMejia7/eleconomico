@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
@@ -11,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewProductos"
         android:layout_width="match_parent"
         android:layout_height="200dp" />
@@ -23,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"/>
 
-    <RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSeleccionados"
         android:layout_width="match_parent"
         android:layout_height="150dp" />
@@ -36,11 +37,40 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp" />
 
+
+    <Button
+        android:id="@+id/btnGuardarPedido"
+        android:text="Guardar Pedido"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" />
+
+    <Button
+        android:id="@+id/btnActualizarPedido"
+        android:text="Actualizar Pedido"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" />
+
+    <Button
+        android:id="@+id/btnEliminarPedido"
+        android:text="Eliminar Pedido"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" />
+
     <Button
         android:id="@+id/btnRealizarPedido"
         android:text="Realizar Pedido"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp" />
+    <Button
+        android:id="@+id/btnVerPedidos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ver Pedidos"
+        android:layout_marginTop="12dp" />
+
 
 </LinearLayout>

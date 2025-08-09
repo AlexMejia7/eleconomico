@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (sessionManager.getUserEmail() != null) {
             // Usuario ya está logueado, vamos al Dashboard
-            Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
+            Intent intent = new Intent(MainActivity.this, MenuActivity.class);
             startActivity(intent);
             finish();
         } else {

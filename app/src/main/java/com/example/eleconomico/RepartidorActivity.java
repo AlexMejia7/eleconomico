@@ -18,9 +18,11 @@ import retrofit2.Response;
 public class RepartidorActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewPedidos;
-    private PedidoAdapter pedidoAdapter;  // Necesitarás un adapter para pedidos
+    private PedidoAdapter pedidoAdapter;
     private ApiService apiService;
-    private String idRepartidor = "1"; // En práctica, tomar de sesión o login repartidor
+    private String idRepartidor = "1"; // Id repartidor para pruebas
+
+    private List<Repartidor> repartidores;  // Lista de repartidores
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +34,26 @@ public class RepartidorActivity extends AppCompatActivity {
 
         apiService = ApiClient.getClient().create(ApiService.class);
 
-        cargarPedidos();
+        cargarRepartidores(); // Primero carga la lista de repartidores
+    }
+
+    private void cargarRepartidores() {
+        apiService.getRepartidores().enqueue(new Callback<List<Repartidor>>() {
+            @Override
+            public void onResponse(Call<List<Repartidor>> call, Response<List<Repartidor>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    repartidores = response.body();
+                    cargarPedidos(); // Carga pedidos después de tener repartidores
+                } else {
+                    Toast.makeText(RepartidorActivity.this, "Error al cargar repartidores", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Repartidor>> call, Throwable t) {
+                Toast.makeText(RepartidorActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void cargarPedidos() {
@@ -42,12 +63,18 @@ public class RepartidorActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Pedido> pedidos = response.body();
 
-                    pedidoAdapter = new PedidoAdapter(pedidos, pedido -> {
-                        // Cuando repartidor clic en pedido, actualizar estado a "Entregado"
-                        actualizarEstadoPedido(pedido.getIdPedido(), "Entregado");
-                    });
+                    pedidoAdapter = new PedidoAdapter(
+                            RepartidorActivity.this,
+                            pedidos,
+                            repartidores,
+                            (pedido, repartidorSeleccionado) -> {
+                                // Aquí usas pedido y repartidorSeleccionado
+                                actualizarEstadoPedido(pedido.getIdPedido(), "Entregado");
+                            }
+                    );
 
                     recyclerViewPedidos.setAdapter(pedidoAdapter);
+
                 } else {
                     Toast.makeText(RepartidorActivity.this, "Error al cargar pedidos", Toast.LENGTH_SHORT).show();
                 }
@@ -70,7 +97,7 @@ public class RepartidorActivity extends AppCompatActivity {
             public void onResponse(Call<Mensaje> call, Response<Mensaje> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(RepartidorActivity.this, response.body().getMensaje(), Toast.LENGTH_SHORT).show();
-                    cargarPedidos(); // Refrescar lista
+                    cargarPedidos(); // Refrescar lista tras actualizar
                 } else {
                     Toast.makeText(RepartidorActivity.this, "Error al actualizar estado", Toast.LENGTH_SHORT).show();
                 }

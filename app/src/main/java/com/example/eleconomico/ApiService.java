@@ -3,7 +3,7 @@ package com.example.eleconomico;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.JsonObject; // Añadido para loginRaw
+import com.google.gson.JsonObject;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -17,10 +17,6 @@ public interface ApiService {
     // USUARIOS
     @POST("usuarios/login")
     Call<Usuario> login(@Body Usuario usuario);
-
-    // Método raw (crudo) para login con JsonObject si prefieres manejar el JSON directamente
-    //@POST("usuarios/login")
-    //Call<JsonObject> loginRaw(@Body JsonObject body);
 
     @POST("login")
     Call<JsonObject> loginRaw(@Body JsonObject json);
@@ -46,4 +42,8 @@ public interface ApiService {
     // REPARTIDORES - ACTUALIZAR ESTADO PEDIDO
     @PUT("pedidos_repartidor")
     Call<Mensaje> actualizarEstadoPedido(@Body Map<String, String> body);
+
+    // REPARTIDORES - OBTENER LISTA
+    @GET("repartidores")
+    Call<List<Repartidor>> getRepartidores();
 }
