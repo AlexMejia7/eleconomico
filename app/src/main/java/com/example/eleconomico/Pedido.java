@@ -5,15 +5,18 @@ import java.util.List;
 public class Pedido {
     private String idPedido;
     private String idUsuario;
-    private String nombreUsuario;   // Nuevo campo para el nombre del usuario
+    private String nombreUsuario;   // Nombre del usuario
     private List<Producto> productos;
     private String estado;
     private String fecha;
     private double total;
 
+    private String idRepartidor;  // <-- Agregado: ID del repartidor asignado
+
     public Pedido() {}
 
-    public Pedido(String idPedido, String idUsuario, String nombreUsuario, List<Producto> productos, String estado, String fecha, double total) {
+    public Pedido(String idPedido, String idUsuario, String nombreUsuario, List<Producto> productos,
+                  String estado, String fecha, double total, String idRepartidor) {
         this.idPedido = idPedido;
         this.idUsuario = idUsuario;
         this.nombreUsuario = nombreUsuario;
@@ -21,6 +24,7 @@ public class Pedido {
         this.estado = estado;
         this.fecha = fecha;
         this.total = total;
+        this.idRepartidor = idRepartidor;
     }
 
     public String getIdPedido() {
@@ -77,5 +81,14 @@ public class Pedido {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    // Getter y setter para idRepartidor
+    public String getIdRepartidor() {
+        return idRepartidor;
+    }
+
+    public void setIdRepartidor(String idRepartidor) {
+        this.idRepartidor = idRepartidor;
     }
 }

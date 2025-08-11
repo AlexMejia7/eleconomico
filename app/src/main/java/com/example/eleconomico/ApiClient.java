@@ -5,20 +5,29 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
 
-    private static Retrofit retrofit = null;
-    //private static final String BASE_URL = "http://192.168.175.202/economico/api.php/";
-   // private static final String BASE_URL = "http://192.168.175.202/economico/api.php/";
-    private static final String BASE_URL = "http://192.168.0.6/economico/api.php/";
+    // Instancia singleton volatile para seguridad en hilos
+    private static volatile Retrofit retrofit = null;
 
-  // 192.168.0.6
+    // Base URL apuntando a tu servidor con IP pública
+    private static final String BASE_URL = "http://34.31.145.38/";
+
+    // Método para obtener la instancia Retrofit
     public static Retrofit getClient() {
-        if (retrofit == null){
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+        if (retrofit == null) {
+            synchronized (ApiClient.class) {
+                if (retrofit == null) {
+                    retrofit = new Retrofit.Builder()
+                            .baseUrl(BASE_URL)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build();
+                }
+            }
         }
         return retrofit;
     }
-}
 
+    // Opcional: método para reiniciar la instancia si necesitas cambiar la URL
+    public static void resetClient() {
+        retrofit = null;
+    }
+}

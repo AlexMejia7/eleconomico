@@ -6,29 +6,46 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <!-- Lista de productos -->
     <TextView
         android:text="Productos Disponibles"
         android:textSize="18sp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewProductos"
         android:layout_width="match_parent"
         android:layout_height="200dp" />
 
+    <!-- Productos seleccionados -->
     <TextView
         android:text="Productos Seleccionados"
         android:textSize="18sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSeleccionados"
         android:layout_width="match_parent"
         android:layout_height="150dp" />
 
+    <!-- Selector de repartidor -->
+    <TextView
+        android:text="Seleccionar Repartidor"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
+
+    <Spinner
+        android:id="@+id/spinnerRepartidores"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <!-- Total -->
     <TextView
         android:id="@+id/tvTotal"
         android:text="Total: L 0.00"
@@ -37,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp" />
 
-
+    <!-- Botones -->
     <Button
         android:id="@+id/btnGuardarPedido"
         android:text="Guardar Pedido"
@@ -60,17 +77,10 @@
         android:layout_marginTop="12dp" />
 
     <Button
-        android:id="@+id/btnRealizarPedido"
-        android:text="Realizar Pedido"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp" />
-    <Button
         android:id="@+id/btnVerPedidos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Ver Pedidos"
         android:layout_marginTop="12dp" />
-
 
 </LinearLayout>

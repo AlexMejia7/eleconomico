@@ -5,7 +5,7 @@ public class Usuario {
     private String idUsuario;          // id_usuario
     private String nombre;             // nombre
     private String correo;             // correo
-    private transient String contrasena;  // contrasena, transient para no serializar
+    private String contrasena;         // contrasena
     private String fotoPerfilBase64;  // foto_perfil_base64
     private String descripcion;        // descripcion
     private String ubicacionGps;       // ubicacion_gps

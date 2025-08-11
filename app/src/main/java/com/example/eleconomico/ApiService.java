@@ -1,49 +1,46 @@
 package com.example.eleconomico;
 
+import com.google.gson.JsonObject;
+
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.JsonObject;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
 
-    // USUARIOS
-    @POST("usuarios/login")
-    Call<Usuario> login(@Body Usuario usuario);
-
-    @POST("login")
+    // Usuarios
+    @POST("login.php")
     Call<JsonObject> loginRaw(@Body JsonObject json);
 
-    @POST("usuarios/register")
+    @POST("registro_usuario.php")
     Call<Mensaje> registrarUsuario(@Body Usuario usuario);
 
-    // PRODUCTOS
-    @GET("productos")
+    // Productos
+    @GET("productos.php")
     Call<List<Producto>> getProductos();
 
-    // PEDIDOS
-    @POST("pedidos")
-    Call<Pedido> crearPedido(@Body Pedido pedido);
+    // Pedidos
+    @POST("pedidos.php")
+    Call<JsonObject> guardarPedido(@Body okhttp3.RequestBody body);
 
-    @GET("pedidos/usuario/{idUsuario}")
-    Call<List<Pedido>> getPedidosPorUsuario(@Path("idUsuario") String idUsuario);
+    @GET("pedidos.php")
+    Call<List<Pedido>> getPedidosPorUsuario(@Query("idUsuario") String idUsuario);
 
-    // REPARTIDORES - PEDIDOS ASIGNADOS
-    @GET("pedidos_repartidor")
+    // Repartidores
+    @GET("repartidores.php")
+    Call<List<Repartidor>> getRepartidores();
+
+    // Pedidos asignados a repartidor
+    @GET("pedidos_repartidor.php")
     Call<List<Pedido>> getPedidosAsignados(@Query("idRepartidor") String idRepartidor);
 
-    // REPARTIDORES - ACTUALIZAR ESTADO PEDIDO
-    @PUT("pedidos_repartidor")
+    // Actualizar estado pedido repartidor
+    @PUT("pedidos_repartidor.php")
     Call<Mensaje> actualizarEstadoPedido(@Body Map<String, String> body);
-
-    // REPARTIDORES - OBTENER LISTA
-    @GET("repartidores")
-    Call<List<Repartidor>> getRepartidores();
 }

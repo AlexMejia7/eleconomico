@@ -1,7 +1,6 @@
 package com.example.eleconomico;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,16 +11,21 @@ public class MenuActivity extends AppCompatActivity {
 
     private Button btnLogin, btnRegister, btnDashboard, btnPedido, btnPerfil, btnLogout;
     private TextView tvWelcome;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
+        sessionManager = new SessionManager(this);
+
         tvWelcome = findViewById(R.id.tvWelcome);
 
-        SharedPreferences prefs = getSharedPreferences("EconómicoPrefs", MODE_PRIVATE);
-        String nombre = prefs.getString("nombre_usuario", "Repartidor");
+        String nombre = sessionManager.getUserName();
+        if (nombre == null) {
+            nombre = "Repartidor";  // Valor por defecto si no hay nombre guardado
+        }
 
         tvWelcome.setText("Bienvenido, " + nombre);
 
@@ -39,10 +43,7 @@ public class MenuActivity extends AppCompatActivity {
         btnPerfil.setOnClickListener(v -> startActivity(new Intent(this, PerfilActivity.class)));
 
         btnLogout.setOnClickListener(v -> {
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.clear();
-            editor.apply();
-
+            sessionManager.clearSession();
             startActivity(new Intent(MenuActivity.this, LoginActivity.class));
             finish();
         });

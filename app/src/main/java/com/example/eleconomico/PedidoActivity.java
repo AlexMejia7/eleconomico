@@ -1,7 +1,7 @@
 package com.example.eleconomico;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -10,44 +10,68 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
 
 public class PedidoActivity extends AppCompatActivity {
 
-    private Button btnRealizarPedido, btnGuardarPedido, btnVerPedidos;
+    private Button btnGuardarPedido;
     private RecyclerView recyclerViewProductos, recyclerViewSeleccionados;
-    private ProductoAdapter productoAdapter;
-    private ProductoAdapter seleccionadoAdapter;
+    private ProductoAdapter productoAdapter, seleccionadoAdapter;
+    private TextView tvTotal;
+    private Spinner spinnerRepartidores;
 
     private List<Producto> productosDisponibles = new ArrayList<>();
     private List<Producto> productosSeleccionados = new ArrayList<>();
+    private List<Repartidor> repartidores = new ArrayList<>();
 
-    private TextView tvTotal;
+    private ApiService apiService;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido);
 
-        btnRealizarPedido = findViewById(R.id.btnRealizarPedido);
-        btnGuardarPedido = findViewById(R.id.btnGuardarPedido);
-        btnVerPedidos = findViewById(R.id.btnVerPedidos);
+        apiService = ApiClient.getClient().create(ApiService.class);
+        sessionManager = new SessionManager(this);
 
+        btnGuardarPedido = findViewById(R.id.btnGuardarPedido);
         recyclerViewProductos = findViewById(R.id.recyclerViewProductos);
         recyclerViewSeleccionados = findViewById(R.id.recyclerViewSeleccionados);
         tvTotal = findViewById(R.id.tvTotal);
+        spinnerRepartidores = findViewById(R.id.spinnerRepartidores);
 
         recyclerViewProductos.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewSeleccionados.setLayoutManager(new LinearLayoutManager(this));
 
         productosDisponibles = obtenerProductosDemo();
 
+        cargarRepartidores();
+
         productoAdapter = new ProductoAdapter(productosDisponibles, producto -> {
-            productosSeleccionados.add(producto);
-            seleccionadoAdapter.notifyDataSetChanged();
-            actualizarTotal();
-            Toast.makeText(this, producto.getNombre() + " agregado al pedido", Toast.LENGTH_SHORT).show();
+            if (!productosSeleccionados.contains(producto)) {
+                producto.setCantidad(1);
+                productosSeleccionados.add(producto);
+                seleccionadoAdapter.notifyDataSetChanged();
+                actualizarTotal();
+                Toast.makeText(this, producto.getNombre() + " agregado al pedido", Toast.LENGTH_SHORT).show();
+            }
         });
 
         seleccionadoAdapter = new ProductoAdapter(productosSeleccionados, producto -> {
@@ -60,67 +84,124 @@ public class PedidoActivity extends AppCompatActivity {
         recyclerViewProductos.setAdapter(productoAdapter);
         recyclerViewSeleccionados.setAdapter(seleccionadoAdapter);
 
-        btnRealizarPedido.setOnClickListener(v -> {
-            if (productosSeleccionados.isEmpty()) {
-                Toast.makeText(this, "Seleccione al menos un producto", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            // Aquí puedes mostrar resumen, preparar para enviar o algo similar
-            Toast.makeText(this, "Pedido realizado con " + productosSeleccionados.size() + " productos", Toast.LENGTH_SHORT).show();
-        });
-
         btnGuardarPedido.setOnClickListener(v -> {
             if (productosSeleccionados.isEmpty()) {
                 Toast.makeText(this, "No hay productos para guardar", Toast.LENGTH_SHORT).show();
                 return;
             }
-            guardarPedido();  // Método que implementamos abajo
+            if (spinnerRepartidores.getSelectedItem() == null) {
+                Toast.makeText(this, "Selecciona un repartidor", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            guardarPedido();
         });
 
-        btnVerPedidos.setOnClickListener(v -> {
-            // Abrir pantalla con lista de pedidos
-            Intent intent = new Intent(PedidoActivity.this, ListaPedidosActivity.class);
-            startActivity(intent);
+        actualizarTotal();
+    }
+
+    private void cargarRepartidores() {
+        apiService.getRepartidores().enqueue(new Callback<List<Repartidor>>() {
+            @Override
+            public void onResponse(Call<List<Repartidor>> call, Response<List<Repartidor>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    repartidores = response.body();
+
+                    // DEBUG LOG para verificar datos recibidos
+                    for (Repartidor r : repartidores) {
+                        Log.d("PedidoActivity", "Repartidor: " + r.getNombre() + " - ID: " + r.getIdRepartidor());
+                    }
+
+                    ArrayAdapter<Repartidor> adapter = new ArrayAdapter<>(
+                            PedidoActivity.this,
+                            android.R.layout.simple_spinner_item,
+                            repartidores
+                    );
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerRepartidores.setAdapter(adapter);
+                } else {
+                    Toast.makeText(PedidoActivity.this, "Error al cargar repartidores", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Repartidor>> call, Throwable t) {
+                Toast.makeText(PedidoActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     private void actualizarTotal() {
         double subtotal = 0;
         for (Producto p : productosSeleccionados) {
-            subtotal += p.getPrecio();
+            int cantidad = p.getCantidad() > 0 ? p.getCantidad() : 1;
+            subtotal += p.getPrecio() * cantidad;
         }
         double impuesto = subtotal * 0.15;
         double total = subtotal + impuesto;
-        tvTotal.setText(String.format("Total: L %.2f (incluye 15%% impuesto)", total));
+        tvTotal.setText(String.format(Locale.getDefault(), "Total: L %.2f (incluye 15%% impuesto)", total));
     }
 
     private List<Producto> obtenerProductosDemo() {
         List<Producto> lista = new ArrayList<>();
-        lista.add(new Producto("1", "Six Pack Corona (2 unidades)", 800.00));
-        lista.add(new Producto("2", "Pañales para bebé 45 unidades", 750.00));
-        lista.add(new Producto("3", "Leche Ceteco 500g", 450.00));
-        lista.add(new Producto("4", "10 Libras de Chuleta", 380.00));
-        lista.add(new Producto("5", "Cerveza Paquete de 6", 15.50));
+        lista.add(new Producto(1, "Six Pack Corona (2 unidades)", 800.00));
+        lista.add(new Producto(2, "Pañales para bebé 45 unidades", 750.00));
+        lista.add(new Producto(3, "Leche Ceteco 500g", 450.00));
+        lista.add(new Producto(4, "10 Libras de Chuleta", 380.00));
+        lista.add(new Producto(5, "Cerveza", 15.50));
         return lista;
     }
 
-    // Simulación guardar pedido en BD o API
     private void guardarPedido() {
-        double subtotal = 0;
-        for (Producto p : productosSeleccionados) {
-            subtotal += p.getPrecio();
+        String idUsuario = sessionManager.getUserId();
+        if (idUsuario == null) {
+            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+            return;
         }
-        double impuesto = subtotal * 0.15;
-        double total = subtotal + impuesto;
 
-        // Aquí tendrías que crear un objeto Pedido con datos reales y llamar a la BD o API REST
+        Repartidor repartidorSeleccionado = (Repartidor) spinnerRepartidores.getSelectedItem();
+        if (repartidorSeleccionado == null) {
+            Toast.makeText(this, "Selecciona un repartidor", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // Simulación:
-        Toast.makeText(this, "Pedido guardado!\nSubtotal: L " + subtotal + "\nTotal: L " + total, Toast.LENGTH_LONG).show();
+        List<Map<String, Object>> productosParaEnviar = new ArrayList<>();
+        for (Producto p : productosSeleccionados) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("id", p.getId_producto());
+            item.put("cantidad", p.getCantidad() > 0 ? p.getCantidad() : 1);
+            productosParaEnviar.add(item);
+        }
 
-        // Limpias lista y actualizas UI
-        productosSeleccionados.clear();
-        seleccionadoAdapter.notifyDataSetChanged();
-        actualizarTotal();
+        String ubicacionEntrega = "15.5040,-88.0256"; // fija o dinámica según tu app
+
+        Map<String, Object> pedidoMap = new HashMap<>();
+        pedidoMap.put("id_usuario", Integer.parseInt(idUsuario));
+        pedidoMap.put("productos", productosParaEnviar);
+        pedidoMap.put("ubicacion_entrega", ubicacionEntrega);
+        pedidoMap.put("id_repartidor", Integer.parseInt(repartidorSeleccionado.getIdRepartidor()));
+
+        Gson gson = new Gson();
+        String jsonPedido = gson.toJson(pedidoMap);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonPedido);
+
+        Call<JsonObject> call = apiService.guardarPedido(body);
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(PedidoActivity.this, "Pedido guardado correctamente", Toast.LENGTH_LONG).show();
+                    productosSeleccionados.clear();
+                    seleccionadoAdapter.notifyDataSetChanged();
+                    actualizarTotal();
+                } else {
+                    Toast.makeText(PedidoActivity.this, "Error al guardar pedido", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(PedidoActivity.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

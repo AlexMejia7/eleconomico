@@ -4,8 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Spinner;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,14 +15,14 @@ import java.util.List;
 
 public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.ViewHolder> {
 
+    public interface OnPedidoClickListener {
+        void onPedidoClick(Pedido pedido, Repartidor repartidorSeleccionado);
+    }
+
     private List<Pedido> pedidos;
     private List<Repartidor> repartidores;
     private OnPedidoClickListener listener;
     private Context context;
-
-    public interface OnPedidoClickListener {
-        void onPedidoClick(Pedido pedido, Repartidor repartidorSeleccionado);
-    }
 
     public PedidoAdapter(Context context, List<Pedido> pedidos, List<Repartidor> repartidores, OnPedidoClickListener listener) {
         this.context = context;
@@ -52,6 +53,8 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.ViewHolder
         TextView tvIdPedido, tvCliente, tvEstado, tvTotal;
         Spinner spinnerRepartidor;
 
+        private boolean spinnerInitialized = false; // Para evitar disparos al inicializar
+
         ViewHolder(View itemView) {
             super(itemView);
             tvIdPedido = itemView.findViewById(R.id.tvIdPedido);
@@ -76,16 +79,27 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.ViewHolder
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinnerRepartidor.setAdapter(adapter);
 
-            spinnerRepartidor.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            // Seleccionar repartidor asignado por defecto en spinner
+            int index = findRepartidorIndex(repartidores, pedido.getIdRepartidor());
+            spinnerRepartidor.setSelection(index);
+
+            spinnerInitialized = false; // Reset para evitar trigger inicial
+
+            spinnerRepartidor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (!spinnerInitialized) {
+                        spinnerInitialized = true; // Primera vez ignorar
+                        return;
+                    }
                     Repartidor repartidorSeleccionado = repartidores.get(position);
                     if (listener != null) {
                         listener.onPedidoClick(pedido, repartidorSeleccionado);
                     }
                 }
+
                 @Override
-                public void onNothingSelected(android.widget.AdapterView<?> parent) {
+                public void onNothingSelected(AdapterView<?> parent) {
                     // No hacer nada
                 }
             });
@@ -97,14 +111,14 @@ public class PedidoAdapter extends RecyclerView.Adapter<PedidoAdapter.ViewHolder
             });
         }
 
-        // Método auxiliar opcional para obtener índice del repartidor asignado
+        // Busca índice del repartidor asignado para seleccionar en el spinner
         private int findRepartidorIndex(List<Repartidor> repartidores, String idRepartidor) {
             for (int i = 0; i < repartidores.size(); i++) {
                 if (repartidores.get(i).getIdRepartidor().equals(idRepartidor)) {
                     return i;
                 }
             }
-            return 0; // o -1 si no se encuentra
+            return 0; // si no encuentra, devuelve índice 0
         }
     }
 }
