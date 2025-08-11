@@ -1,10 +1,11 @@
 package com.example.eleconomico;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,12 +26,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import android.widget.Spinner;
-import android.widget.ArrayAdapter;
-
 public class PedidoActivity extends AppCompatActivity {
 
-    private Button btnGuardarPedido;
+    private Button btnGuardarPedido, btnActualizarPedido, btnEliminarPedido, btnVerPedidos;
     private RecyclerView recyclerViewProductos, recyclerViewSeleccionados;
     private ProductoAdapter productoAdapter, seleccionadoAdapter;
     private TextView tvTotal;
@@ -52,6 +50,10 @@ public class PedidoActivity extends AppCompatActivity {
         sessionManager = new SessionManager(this);
 
         btnGuardarPedido = findViewById(R.id.btnGuardarPedido);
+        btnActualizarPedido = findViewById(R.id.btnActualizarPedido);
+        btnEliminarPedido = findViewById(R.id.btnEliminarPedido);
+        btnVerPedidos = findViewById(R.id.btnVerPedidos);
+
         recyclerViewProductos = findViewById(R.id.recyclerViewProductos);
         recyclerViewSeleccionados = findViewById(R.id.recyclerViewSeleccionados);
         tvTotal = findViewById(R.id.tvTotal);
@@ -96,6 +98,18 @@ public class PedidoActivity extends AppCompatActivity {
             guardarPedido();
         });
 
+        btnActualizarPedido.setOnClickListener(v -> {
+            Toast.makeText(this, "Función actualizar en construcción", Toast.LENGTH_SHORT).show();
+        });
+
+        btnEliminarPedido.setOnClickListener(v -> {
+            Toast.makeText(this, "Función eliminar en construcción", Toast.LENGTH_SHORT).show();
+        });
+
+        btnVerPedidos.setOnClickListener(v -> {
+            Toast.makeText(this, "Función ver pedidos en construcción", Toast.LENGTH_SHORT).show();
+        });
+
         actualizarTotal();
     }
 
@@ -105,12 +119,6 @@ public class PedidoActivity extends AppCompatActivity {
             public void onResponse(Call<List<Repartidor>> call, Response<List<Repartidor>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     repartidores = response.body();
-
-                    // DEBUG LOG para verificar datos recibidos
-                    for (Repartidor r : repartidores) {
-                        Log.d("PedidoActivity", "Repartidor: " + r.getNombre() + " - ID: " + r.getIdRepartidor());
-                    }
-
                     ArrayAdapter<Repartidor> adapter = new ArrayAdapter<>(
                             PedidoActivity.this,
                             android.R.layout.simple_spinner_item,
@@ -159,10 +167,6 @@ public class PedidoActivity extends AppCompatActivity {
         }
 
         Repartidor repartidorSeleccionado = (Repartidor) spinnerRepartidores.getSelectedItem();
-        if (repartidorSeleccionado == null) {
-            Toast.makeText(this, "Selecciona un repartidor", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         List<Map<String, Object>> productosParaEnviar = new ArrayList<>();
         for (Producto p : productosSeleccionados) {
@@ -172,7 +176,7 @@ public class PedidoActivity extends AppCompatActivity {
             productosParaEnviar.add(item);
         }
 
-        String ubicacionEntrega = "15.5040,-88.0256"; // fija o dinámica según tu app
+        String ubicacionEntrega = "15.5040,-88.0256";
 
         Map<String, Object> pedidoMap = new HashMap<>();
         pedidoMap.put("id_usuario", Integer.parseInt(idUsuario));
