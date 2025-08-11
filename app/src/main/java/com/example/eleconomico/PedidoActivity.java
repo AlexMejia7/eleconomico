@@ -46,6 +46,8 @@ public class PedidoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido);
 
+        // IMPORTANTE: Asegúrate de actualizar la base URL en ApiClient a:
+        // "http://34.31.145.38/economico/api.php/"
         apiService = ApiClient.getClient().create(ApiService.class);
         sessionManager = new SessionManager(this);
 

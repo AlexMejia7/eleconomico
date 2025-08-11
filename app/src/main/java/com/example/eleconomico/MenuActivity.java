@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MenuActivity extends AppCompatActivity {
 
-    private Button btnLogin, btnRegister, btnDashboard, btnPedido, btnPerfil, btnLogout;
+    private Button btnLogin, btnRegister, btnDashboard, btnPedido, btnPerfil, btnLogout, btnRepartidor;
     private TextView tvWelcome;
     private SessionManager sessionManager;
 
@@ -35,12 +35,15 @@ public class MenuActivity extends AppCompatActivity {
         btnPedido = findViewById(R.id.btnPedido);
         btnPerfil = findViewById(R.id.btnPerfil);
         btnLogout = findViewById(R.id.btnLogout);
+        btnRepartidor = findViewById(R.id.btnRepartidor); // NUEVO botón repartidor
 
         btnLogin.setOnClickListener(v -> startActivity(new Intent(this, LoginActivity.class)));
         btnRegister.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
         btnDashboard.setOnClickListener(v -> startActivity(new Intent(this, DashboardActivity.class)));
         btnPedido.setOnClickListener(v -> startActivity(new Intent(this, PedidoActivity.class)));
         btnPerfil.setOnClickListener(v -> startActivity(new Intent(this, PerfilActivity.class)));
+
+        btnRepartidor.setOnClickListener(v -> startActivity(new Intent(this, RepartidorActivity.class))); // ABRIR actividad repartidor
 
         btnLogout.setOnClickListener(v -> {
             sessionManager.clearSession();

@@ -36,6 +36,10 @@ public interface ApiService {
     @GET("repartidores.php")
     Call<List<Repartidor>> getRepartidores();
 
+    // Crear nuevo repartidor (POST)
+    @POST("crear_repartidor.php")
+    Call<Mensaje> crearRepartidor(@Body Map<String, String> body);
+
     // Pedidos asignados a repartidor
     @GET("pedidos_repartidor.php")
     Call<List<Pedido>> getPedidosAsignados(@Query("idRepartidor") String idRepartidor);
