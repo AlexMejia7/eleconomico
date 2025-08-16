@@ -24,6 +24,14 @@
 # Reglas mínimas para librerías usadas
 # -----------------------------------------
 
+# ===============================
+# Librerías externas
+# ===============================
+
+# ===============================
+# Librerías externas
+# ===============================
+
 # Gson
 -keep class com.google.gson.** { *; }
 
@@ -34,11 +42,14 @@
 # OkHttp
 -keep class okhttp3.** { *; }
 
-# Firebase Messaging
+# Firebase
+-keep class com.google.firebase.** { *; }
 -keep class com.google.firebase.messaging.** { *; }
 
 # Glide
 -keep class com.bumptech.glide.** { *; }
+-keep interface com.bumptech.glide.** { *; }
+-keep enum com.bumptech.glide.** { *; }
 
 # Volley
 -keep class com.android.volley.** { *; }
@@ -46,8 +57,25 @@
 # CircleImageView
 -keep class de.hdodenhof.circleimageview.** { *; }
 
+# ===============================
+# Tu proyecto
+# ===============================
+
+# Mantener todos los modelos para Gson y Retrofit (ajusta el paquete si es diferente)
+-keep class com.example.eleconomico.models.** { *; }
+
+# Mantener todas las clases usadas por reflexión en tu app
+-keep class com.example.eleconomico.** { *; }
+
+# ===============================
+# General
+# ===============================
+
 # Mantener anotaciones importantes
 -keepattributes *Annotation*
 
 # Mantener miembros de clases serializables
 -keepclassmembers class * implements java.io.Serializable { *; }
+
+# Evitar advertencias MultiDex
+-dontwarn androidx.multidex.**

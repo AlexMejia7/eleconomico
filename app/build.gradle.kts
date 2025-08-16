@@ -14,6 +14,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Habilita MultiDex si es necesario
+        multiDexEnabled = true
     }
 
     signingConfigs {
@@ -28,12 +31,18 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = true                     // Activa ProGuard
+            isMinifyEnabled = true                     // Activa ProGuard/R8
             isShrinkResources = true                   // Reduce recursos no usados
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            multiDexEnabled = true                     // Evita problemas de límite de métodos
+        }
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            multiDexEnabled = true
         }
     }
 
@@ -54,6 +63,7 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
+    // Librerías externas
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.code.gson:gson:2.8.6")
@@ -64,4 +74,5 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation("com.android.volley:volley:1.2.1")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("androidx.multidex:multidex:2.0.1")  // Corregido para Kotlin DSL
 }
