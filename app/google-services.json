@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "707285240817",
+    "project_id": "alex-49c68",
+    "storage_bucket": "alex-49c68.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707285240817:android:9a6fec5c698c7ab9e59250",
+        "android_client_info": {
+          "package_name": "com.example.eleconomico"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5-VZmfHXxT8yhnY9LT7efb6RouNxKRSo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
