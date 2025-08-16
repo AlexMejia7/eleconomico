@@ -16,15 +16,27 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("eleconomico.jks")          // Ruta a tu keystore
+            storePassword = "tuStorePassword"           // Cambia por tu contraseña
+            keyAlias = "eleconomico_key"                // Alias de tu clave
+            keyPassword = "tuKeyPassword"               // Contraseña de la clave
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true                     // Activa ProGuard
+            isShrinkResources = true                   // Reduce recursos no usados
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -32,7 +44,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -51,6 +62,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.github.bumptech.glide:glide:4.15.1")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("com.android.volley:volley:1.2.1")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
 }

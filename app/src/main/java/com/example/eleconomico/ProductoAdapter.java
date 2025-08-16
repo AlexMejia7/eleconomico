@@ -1,7 +1,9 @@
+// ProductoAdapter.java
 package com.example.eleconomico;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +43,6 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
 
         holder.etCantidad.setText(String.valueOf(producto.getCantidad() > 0 ? producto.getCantidad() : 1));
 
-        // Actualizar cantidad al cambiar en EditText
         holder.etCantidad.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
@@ -51,13 +52,13 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
                 int cantidad = 1;
                 try {
                     cantidad = Integer.parseInt(s.toString());
-                    if (cantidad < 1) cantidad = 1; // mínimo 1
+                    if (cantidad < 1) cantidad = 1;
                 } catch (NumberFormatException e) {
                     cantidad = 1;
                 }
                 producto.setCantidad(cantidad);
                 if(listener != null) {
-                    listener.onProductoClick(producto); // avisamos para actualizar total
+                    listener.onProductoClick(producto);
                 }
             }
         });
@@ -67,6 +68,14 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
                 listener.onProductoClick(producto);
             }
         });
+    }
+
+    public void notifyDataSetChangedSafe() {
+        try {
+            notifyDataSetChanged();
+        } catch (Exception e) {
+            Log.d("DEBUG_PEDIDO", "RecyclerView notifyDataSetChanged falló: " + e.getMessage());
+        }
     }
 
     @Override

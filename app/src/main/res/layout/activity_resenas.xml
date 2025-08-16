@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- RecyclerView para mostrar las reseñas -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvResenas"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- Formulario para nueva reseña -->
+    <EditText
+        android:id="@+id/etComentario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Escribe tu comentario"/>
+
+    <RatingBar
+        android:id="@+id/rbCalificacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="1"
+        android:rating="5"/>
+
+    <Button
+        android:id="@+id/btnEnviarResena"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enviar Reseña"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>

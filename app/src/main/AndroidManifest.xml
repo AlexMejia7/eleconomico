@@ -14,15 +14,33 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ListaPedidosActivity"
+            android:name=".ResenasActivity"
             android:exported="false" />
-        <!-- Para permitir HTTP -->
+        <!-- Actividades -->
+        <activity
+            android:name=".ListaPedidosActivity"
+            android:exported="true" />
         <activity
             android:name=".RepartidorActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".MenuActivity"
-            android:exported="false" />
+            android:exported="true" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true" />
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="true" />
+        <activity
+            android:name=".DashboardActivity"
+            android:exported="true" />
+        <activity
+            android:name=".PedidoActivity"
+            android:exported="true" />
+        <activity
+            android:name=".PerfilActivity"
+            android:exported="true" /> <!-- Actividad principal -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -32,21 +50,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".RegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".DashboardActivity"
-            android:exported="false" />
-        <activity
-            android:name=".PedidoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".PerfilActivity"
-            android:exported="false" />
     </application>
 
 </manifest>

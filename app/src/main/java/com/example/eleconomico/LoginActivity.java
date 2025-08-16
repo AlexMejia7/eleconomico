@@ -2,6 +2,7 @@ package com.example.eleconomico;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -21,17 +22,15 @@ public class LoginActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private ApiService apiService;
 
+    private static final String TAG = "LoginActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         sessionManager = new SessionManager(this);
 
-        // Verificar si ya hay sesión guardada usando SessionManager
-        String nombreGuardado = sessionManager.getUserName();
-
-        if (nombreGuardado != null) {
-            // Ya hay sesión activa → saltamos login
+        if (sessionManager.getUserName() != null) {
             startActivity(new Intent(LoginActivity.this, MenuActivity.class));
             finish();
             return;
@@ -59,19 +58,25 @@ public class LoginActivity extends AppCompatActivity {
             json.addProperty("correo", correo);
             json.addProperty("contrasena", contrasena);
 
+            Log.d(TAG, "Enviando login para: " + correo);
+
             Call<JsonObject> call = apiService.loginRaw(json);
             call.enqueue(new Callback<JsonObject>() {
                 @Override
                 public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                    Log.d(TAG, "Respuesta recibida. Código: " + response.code());
+
                     if (response.isSuccessful() && response.body() != null) {
                         JsonObject body = response.body();
+                        Log.d(TAG, "Body: " + body.toString());
 
                         if (body.has("usuario")) {
                             JsonObject usuarioJson = body.getAsJsonObject("usuario");
                             String nombre = usuarioJson.get("nombre").getAsString();
                             String id = usuarioJson.get("id").getAsString();
 
-                            // Guardar en SessionManager
+                            Log.d(TAG, "Usuario: " + nombre + " ID: " + id);
+
                             sessionManager.saveUserName(nombre);
                             sessionManager.saveUserId(id);
 
@@ -80,17 +85,33 @@ public class LoginActivity extends AppCompatActivity {
                             finish();
 
                         } else {
-                            Toast.makeText(LoginActivity.this, "Credenciales inválidas", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "⚠ Credenciales inválidas", Toast.LENGTH_SHORT).show();
                         }
 
                     } else {
-                        Toast.makeText(LoginActivity.this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
+                        String mensajeError;
+                        switch (response.code()) {
+                            case 401:
+                                mensajeError = "⚠ Usuario o contraseña incorrectos";
+                                break;
+                            case 404:
+                                mensajeError = "❌ Endpoint no encontrado en el servidor";
+                                break;
+                            case 500:
+                                mensajeError = "💥 Error interno del servidor";
+                                break;
+                            default:
+                                mensajeError = "⚠ Error desconocido: " + response.code();
+                                break;
+                        }
+                        Toast.makeText(LoginActivity.this, mensajeError, Toast.LENGTH_LONG).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<JsonObject> call, Throwable t) {
-                    Toast.makeText(LoginActivity.this, "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Error conexión: " + t.getMessage(), t);
+                    Toast.makeText(LoginActivity.this, "🌐 No se pudo conectar: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 }
             });
         });
@@ -100,3 +121,4 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 }
+

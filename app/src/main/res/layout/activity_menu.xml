@@ -83,6 +83,16 @@
             android:text="Repartidores"
             android:layout_marginTop="8dp" />
 
+        <!-- NUEVO BOTÓN PARA RESEÑAS -->
+        <Button
+            android:id="@+id/btnResenas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reseñas"
+            android:layout_marginBottom="8dp"/>
+
+     
+
 
     </LinearLayout>
 

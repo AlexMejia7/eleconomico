@@ -1,11 +1,12 @@
 package com.example.eleconomico;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Spinner;
-import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -46,8 +47,7 @@ public class PedidoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pedido);
 
-        // IMPORTANTE: Asegúrate de actualizar la base URL en ApiClient a:
-        // "http://34.31.145.38/economico/api.php/"
+        // Inicialización
         apiService = ApiClient.getClient().create(ApiService.class);
         sessionManager = new SessionManager(this);
 
@@ -68,19 +68,21 @@ public class PedidoActivity extends AppCompatActivity {
 
         cargarRepartidores();
 
+        // Adapter para productos disponibles
         productoAdapter = new ProductoAdapter(productosDisponibles, producto -> {
             if (!productosSeleccionados.contains(producto)) {
                 producto.setCantidad(1);
                 productosSeleccionados.add(producto);
-                seleccionadoAdapter.notifyDataSetChanged();
+                seleccionadoAdapter.notifyDataSetChangedSafe();
                 actualizarTotal();
                 Toast.makeText(this, producto.getNombre() + " agregado al pedido", Toast.LENGTH_SHORT).show();
             }
         });
 
+        // Adapter para productos seleccionados
         seleccionadoAdapter = new ProductoAdapter(productosSeleccionados, producto -> {
             productosSeleccionados.remove(producto);
-            seleccionadoAdapter.notifyDataSetChanged();
+            seleccionadoAdapter.notifyDataSetChangedSafe();
             actualizarTotal();
             Toast.makeText(this, producto.getNombre() + " removido del pedido", Toast.LENGTH_SHORT).show();
         });
@@ -88,29 +90,25 @@ public class PedidoActivity extends AppCompatActivity {
         recyclerViewProductos.setAdapter(productoAdapter);
         recyclerViewSeleccionados.setAdapter(seleccionadoAdapter);
 
+        // Botones
         btnGuardarPedido.setOnClickListener(v -> {
             if (productosSeleccionados.isEmpty()) {
                 Toast.makeText(this, "No hay productos para guardar", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (spinnerRepartidores.getSelectedItem() == null) {
-                Toast.makeText(this, "Selecciona un repartidor", Toast.LENGTH_SHORT).show();
+            Repartidor repartidorSeleccionado = (Repartidor) spinnerRepartidores.getSelectedItem();
+            if (repartidorSeleccionado == null || repartidorSeleccionado.getIdRepartidor() == null ||
+                    repartidorSeleccionado.getIdRepartidor().trim().isEmpty()) {
+                Toast.makeText(this, "Repartidor no seleccionado o ID vacío", Toast.LENGTH_SHORT).show();
+                Log.d("DEBUG_PEDIDO", "Repartidor seleccionado: " + repartidorSeleccionado);
                 return;
             }
             guardarPedido();
         });
 
-        btnActualizarPedido.setOnClickListener(v -> {
-            Toast.makeText(this, "Función actualizar en construcción", Toast.LENGTH_SHORT).show();
-        });
-
-        btnEliminarPedido.setOnClickListener(v -> {
-            Toast.makeText(this, "Función eliminar en construcción", Toast.LENGTH_SHORT).show();
-        });
-
-        btnVerPedidos.setOnClickListener(v -> {
-            Toast.makeText(this, "Función ver pedidos en construcción", Toast.LENGTH_SHORT).show();
-        });
+        btnActualizarPedido.setOnClickListener(v -> Toast.makeText(this, "Función actualizar en construcción", Toast.LENGTH_SHORT).show());
+        btnEliminarPedido.setOnClickListener(v -> Toast.makeText(this, "Función eliminar en construcción", Toast.LENGTH_SHORT).show());
+        btnVerPedidos.setOnClickListener(v -> Toast.makeText(this, "Función ver pedidos en construcción", Toast.LENGTH_SHORT).show());
 
         actualizarTotal();
     }
@@ -121,6 +119,9 @@ public class PedidoActivity extends AppCompatActivity {
             public void onResponse(Call<List<Repartidor>> call, Response<List<Repartidor>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     repartidores = response.body();
+                    if (repartidores.isEmpty()) {
+                        repartidores.add(new Repartidor("0", "Repartidor Genérico"));
+                    }
                     ArrayAdapter<Repartidor> adapter = new ArrayAdapter<>(
                             PedidoActivity.this,
                             android.R.layout.simple_spinner_item,
@@ -128,6 +129,7 @@ public class PedidoActivity extends AppCompatActivity {
                     );
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerRepartidores.setAdapter(adapter);
+                    spinnerRepartidores.setSelection(0);
                 } else {
                     Toast.makeText(PedidoActivity.this, "Error al cargar repartidores", Toast.LENGTH_SHORT).show();
                 }
@@ -169,6 +171,8 @@ public class PedidoActivity extends AppCompatActivity {
         }
 
         Repartidor repartidorSeleccionado = (Repartidor) spinnerRepartidores.getSelectedItem();
+        String idRepartidor = repartidorSeleccionado.getIdRepartidor();
+        Log.d("DEBUG_PEDIDO", "ID Repartidor: " + idRepartidor);
 
         List<Map<String, Object>> productosParaEnviar = new ArrayList<>();
         for (Producto p : productosSeleccionados) {
@@ -178,27 +182,26 @@ public class PedidoActivity extends AppCompatActivity {
             productosParaEnviar.add(item);
         }
 
-        String ubicacionEntrega = "15.5040,-88.0256";
+        String ubicacionEntrega = "15.5040,-88.0256"; // Hardcodeada temporal
 
         Map<String, Object> pedidoMap = new HashMap<>();
         pedidoMap.put("id_usuario", Integer.parseInt(idUsuario));
         pedidoMap.put("productos", productosParaEnviar);
         pedidoMap.put("ubicacion_entrega", ubicacionEntrega);
-        pedidoMap.put("id_repartidor", Integer.parseInt(repartidorSeleccionado.getIdRepartidor()));
+        pedidoMap.put("id_repartidor", Integer.parseInt(idRepartidor));
 
         Gson gson = new Gson();
         String jsonPedido = gson.toJson(pedidoMap);
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonPedido);
 
-        Call<JsonObject> call = apiService.guardarPedido(body);
-        call.enqueue(new Callback<JsonObject>() {
+        apiService.guardarPedido(body).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(PedidoActivity.this, "Pedido guardado correctamente", Toast.LENGTH_LONG).show();
                     productosSeleccionados.clear();
-                    seleccionadoAdapter.notifyDataSetChanged();
+                    seleccionadoAdapter.notifyDataSetChangedSafe();
                     actualizarTotal();
+                    Toast.makeText(PedidoActivity.this, "Pedido guardado correctamente", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(PedidoActivity.this, "Error al guardar pedido", Toast.LENGTH_LONG).show();
                 }

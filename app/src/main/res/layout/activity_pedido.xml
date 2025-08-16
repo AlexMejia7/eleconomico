@@ -16,7 +16,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewProductos"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="200dp"
+        android:layout_marginTop="8dp"/>
 
     <!-- Productos seleccionados -->
     <TextView
@@ -29,7 +30,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSeleccionados"
         android:layout_width="match_parent"
-        android:layout_height="150dp" />
+        android:layout_height="150dp"
+        android:layout_marginTop="8dp"/>
 
     <!-- Selector de repartidor -->
     <TextView
@@ -54,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp" />
 
-    <!-- Botones -->
+    <!-- Botones de acción -->
     <Button
         android:id="@+id/btnGuardarPedido"
         android:text="Guardar Pedido"
@@ -78,9 +80,9 @@
 
     <Button
         android:id="@+id/btnVerPedidos"
+        android:text="Ver Pedidos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ver Pedidos"
         android:layout_marginTop="12dp" />
 
 </LinearLayout>
