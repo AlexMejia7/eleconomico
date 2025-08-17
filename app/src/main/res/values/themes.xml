@@ -1,9 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
+    <!-- Tema base de la app -->
     <style name="Base.Theme.Eleconomico" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Puedes personalizar colores aquí -->
     </style>
 
+    <!-- Tema normal de la app -->
     <style name="Theme.Eleconomico" parent="Base.Theme.Eleconomico" />
+
+    <!-- Tema especial para SplashActivity -->
+    <style name="Theme.Eleconomico.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/white</item> <!-- Fondo blanco -->
+        <item name="android:windowNoTitle">true</item> <!-- Sin título -->
+        <item name="android:windowFullscreen">true</item> <!-- Pantalla completa -->
+        <item name="android:statusBarColor">@android:color/transparent</item> <!-- Barra transparente -->
+    </style>
+
 </resources>

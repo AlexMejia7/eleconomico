@@ -13,43 +13,29 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
+
+        <!-- SplashActivity con el tema de splash y como inicio -->
         <activity
-            android:name=".ResenasActivity"
-            android:exported="false" />
-        <!-- Actividades -->
-        <activity
-            android:name=".ListaPedidosActivity"
-            android:exported="true" />
-        <activity
-            android:name=".RepartidorActivity"
-            android:exported="true" />
-        <activity
-            android:name=".MenuActivity"
-            android:exported="true" />
-        <activity
-            android:name=".LoginActivity"
-            android:exported="true" />
-        <activity
-            android:name=".RegisterActivity"
-            android:exported="true" />
-        <activity
-            android:name=".DashboardActivity"
-            android:exported="true" />
-        <activity
-            android:name=".PedidoActivity"
-            android:exported="true" />
-        <activity
-            android:name=".PerfilActivity"
-            android:exported="true" /> <!-- Actividad principal -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Eleconomico.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <!-- Resto de actividades -->
+        <activity android:name=".ResenasActivity" android:exported="false" />
+        <activity android:name=".ListaPedidosActivity" android:exported="true" />
+        <activity android:name=".RepartidorActivity" android:exported="true" />
+        <activity android:name=".MenuActivity" android:exported="true" />
+        <activity android:name=".LoginActivity" android:exported="true" />
+        <activity android:name=".RegisterActivity" android:exported="true" />
+        <activity android:name=".DashboardActivity" android:exported="true" />
+        <activity android:name=".PedidoActivity" android:exported="true" />
+        <activity android:name=".PerfilActivity" android:exported="true" />
+        <activity android:name=".MainActivity" android:exported="true" />
+
+    </application>
 </manifest>

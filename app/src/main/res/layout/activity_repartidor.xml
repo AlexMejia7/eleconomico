@@ -1,26 +1,49 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewPedidos"
+    <!-- Logo UTH centrado con alpha semitransparente -->
+    <ImageView
+        android:id="@+id/logoCenter"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:src="@drawable/uth"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:alpha="0.2"
+        android:contentDescription="Logo UTH"/>
+
+    <!-- Overlay opcional semi-transparente para contraste -->
+    <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
-        android:clipToPadding="false"/>
+        android:background="#10FFFFFF"/> <!-- blanco 6% -->
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAgregar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="Agregar Repartidor"
-        android:src="@android:drawable/ic_input_add"
-        app:layout_anchor="@id/recyclerViewPedidos"
-        app:layout_anchorGravity="bottom|end"
-        android:layout_margin="16dp"/>
+    <!-- Layout principal con RecyclerView y FAB -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewPedidos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:clipToPadding="false"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAgregar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Agregar Repartidor"
+            android:src="@android:drawable/ic_input_add"
+            app:layout_anchor="@id/recyclerViewPedidos"
+            app:layout_anchorGravity="bottom|end"
+            android:layout_margin="16dp"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</FrameLayout>

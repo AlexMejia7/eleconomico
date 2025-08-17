@@ -1,4 +1,3 @@
-// ProductoAdapter.java
 package com.example.eleconomico;
 
 import android.text.Editable;
@@ -38,12 +37,20 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Producto producto = productos.get(position);
-        holder.tvNombre.setText(producto.getNombre());
+
+        holder.tvNombre.setText(producto.getNombre() != null ? producto.getNombre() : "Producto desconocido");
         holder.tvPrecio.setText(String.format("L %.2f", producto.getPrecio()));
 
-        holder.etCantidad.setText(String.valueOf(producto.getCantidad() > 0 ? producto.getCantidad() : 1));
+        // Establecer cantidad por defecto si es <= 0
+        int cantidadActual = producto.getCantidad() > 0 ? producto.getCantidad() : 1;
+        holder.etCantidad.setText(String.valueOf(cantidadActual));
 
-        holder.etCantidad.addTextChangedListener(new TextWatcher() {
+        // Evitar que se acumulen múltiples TextWatchers
+        if (holder.etCantidad.getTag() instanceof TextWatcher) {
+            holder.etCantidad.removeTextChangedListener((TextWatcher) holder.etCantidad.getTag());
+        }
+
+        TextWatcher watcher = new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
@@ -57,11 +64,14 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ViewHo
                     cantidad = 1;
                 }
                 producto.setCantidad(cantidad);
-                if(listener != null) {
+                if (listener != null) {
                     listener.onProductoClick(producto);
                 }
             }
-        });
+        };
+
+        holder.etCantidad.addTextChangedListener(watcher);
+        holder.etCantidad.setTag(watcher);
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {

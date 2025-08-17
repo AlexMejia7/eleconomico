@@ -3,7 +3,7 @@ package com.example.eleconomico;
 import com.google.gson.JsonObject;
 
 import java.util.List;
-import java.util.Map;  // <-- Import necesario
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -18,7 +18,7 @@ public interface ApiService {
     @POST("login.php")
     Call<JsonObject> loginRaw(@Body JsonObject json);
 
-    // Registro usuario con clase Usuario (debes tener esta clase bien definida)
+    // Registro usuario con clase Usuario
     @POST("registro_usuario.php")
     Call<Mensaje> registrarUsuario(@Body Usuario usuario);
 
@@ -26,7 +26,7 @@ public interface ApiService {
     @GET("productos.php")
     Call<List<Producto>> getProductos();
 
-    // Guardar pedido (revisar que envíes bien el RequestBody)
+    // Guardar pedido (RequestBody con JSON)
     @POST("pedidos.php")
     Call<JsonObject> guardarPedido(@Body okhttp3.RequestBody body);
 
@@ -34,11 +34,15 @@ public interface ApiService {
     @GET("pedidos.php")
     Call<List<Pedido>> getPedidosPorUsuario(@Query("idUsuario") String idUsuario);
 
+    // Obtener todos los pedidos (para administrador) como JsonObject para parsear correctamente
+    @GET("pedidos.php")
+    Call<JsonObject> obtenerPedidosRaw();
+
     // Obtener repartidores
     @GET("repartidores.php")
     Call<List<Repartidor>> getRepartidores();
 
-    // Crear repartidor con clase o Map (mejor clase si puedes)
+    // Crear repartidor con Map
     @POST("crear_repartidor.php")
     Call<Mensaje> crearRepartidor(@Body Map<String, String> body);
 

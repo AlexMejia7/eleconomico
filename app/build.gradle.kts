@@ -75,4 +75,5 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
     implementation("androidx.multidex:multidex:2.0.1")  // Corregido para Kotlin DSL
+    implementation("androidx.recyclerview:recyclerview:1.3.1")
 }

@@ -1,88 +1,161 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <!-- Lista de productos -->
-    <TextView
-        android:text="Productos Disponibles"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewProductos"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="8dp"/>
-
-    <!-- Productos seleccionados -->
-    <TextView
-        android:text="Productos Seleccionados"
-        android:textSize="18sp"
+    <!-- Imagen de fondo centrada y proporcional -->
+    <ImageView
+        android:id="@+id/fondo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
+        android:src="@drawable/uth"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center"
+        android:contentDescription="Fondo"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewSeleccionados"
+    <!-- Overlay semitransparente -->
+    <View
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginTop="8dp"/>
+        android:layout_height="match_parent"
+        android:background="#80000000"/> <!-- negro 50% -->
 
-    <!-- Selector de repartidor -->
-    <TextView
-        android:text="Seleccionar Repartidor"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
-
-    <Spinner
-        android:id="@+id/spinnerRepartidores"
+    <!-- Contenido principal -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp" />
+        android:layout_height="match_parent">
 
-    <!-- Total -->
-    <TextView
-        android:id="@+id/tvTotal"
-        android:text="Total: L 0.00"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-    <!-- Botones de acción -->
-    <Button
-        android:id="@+id/btnGuardarPedido"
-        android:text="Guardar Pedido"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp" />
+            <!-- Lista de productos -->
+            <TextView
+                android:text="Productos Disponibles"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/btnActualizarPedido"
-        android:text="Actualizar Pedido"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewProductos"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp"/>
 
-    <Button
-        android:id="@+id/btnEliminarPedido"
-        android:text="Eliminar Pedido"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp" />
+            <!-- Productos seleccionados -->
+            <TextView
+                android:text="Productos Seleccionados"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
 
-    <Button
-        android:id="@+id/btnVerPedidos"
-        android:text="Ver Pedidos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewSeleccionados"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="8dp"/>
 
-</LinearLayout>
+            <!-- Ubicación de entrega -->
+            <TextView
+                android:text="Ubicación de Entrega"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
+
+            <EditText
+                android:id="@+id/etUbicacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ingrese su dirección"
+                android:padding="10dp"
+                android:backgroundTint="#006400"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#FFD700"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Selector de repartidor -->
+            <TextView
+                android:text="Seleccionar Repartidor"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
+
+            <Spinner
+                android:id="@+id/spinnerRepartidores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
+
+            <!-- Total -->
+            <TextView
+                android:id="@+id/tvTotal"
+                android:text="Total: L 0.00"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
+
+            <!-- Botones estilizados UTH en verde oscuro -->
+            <Button
+                android:id="@+id/btnGuardarPedido"
+                android:text="Guardar Pedido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#006400"
+                android:textColor="#FFD700"/>
+
+            <Button
+                android:id="@+id/btnActualizarPedido"
+                android:text="Actualizar Pedido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#006400"
+                android:textColor="#FFD700"/>
+
+            <Button
+                android:id="@+id/btnEliminarPedido"
+                android:text="Eliminar Pedido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#006400"
+                android:textColor="#FFD700"/>
+
+            <Button
+                android:id="@+id/btnVerPedidos"
+                android:text="Ver Pedidos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#006400"
+                android:textColor="#FFD700"/>
+
+            <!-- RecyclerView para pedidos -->
+            <TextView
+                android:text="Pedidos Registrados"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewPedidos"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="8dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
